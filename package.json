@@ -38,10 +38,12 @@
     "generate:readme": "node ./scripts/generate-readme.js",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "prepublishOnly": "npm run lib",
-    "lib": "npm run lib:clean && npm run lib:build",
+    "prepublishOnly": "npm run lib:build",
+    "lib": "npm run lib:clean && npm run lib:build:esm &&npm run lib:build:cjs",
     "lib:clean": "rimraf dist",
-    "lib:build": "tsc -p ./tsconfig.lib.json",
+    "lib:build:ts": "tsc -p ./tsconfig.lib.json",
+    "lib:build:esm": "cross-env BABEL_ENV=esm NODE_ENV=production babel src/lib --out-dir dist --copy-files",
+    "lib:build:cjs": "cross-env BABEL_ENV=cjs NODE_ENV=production babel src/lib --out-dir dist/cjs --copy-files",
     "format:all": "prettier --write **/*.js"
   },
   "husky": {
@@ -49,9 +51,9 @@
       "pre-commit": "pretty-quick --staged"
     }
   },
-  "main": "dist/index.js",
-  "module": "dist/",
-  "types": "dist/index.d.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/index.js",
+  "types": "./undraw.d.ts",
   "files": [
     "dist"
   ],
@@ -63,6 +65,12 @@
     "prop-types": "^15.7.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.2.0",
+    "@babel/core": "^7.2.0",
+    "@babel/plugin-proposal-class-properties": "^7.2.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
+    "@babel/preset-env": "^7.3.4",
+    "@babel/preset-react": "^7.0.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.25",
     "@fortawesome/free-brands-svg-icons": "^5.11.2",
     "@fortawesome/react-fontawesome": "^0.1.7",
